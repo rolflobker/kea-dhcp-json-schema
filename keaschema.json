@@ -90,20 +90,32 @@
           "$ref": "#/definitions/subnet"
         },
         "valid-lifetime": {
-          "$ref": "#/definitions/valid-lifetime"
+          "$ref": "#/definitions/valid-lifetime",
+          "title": "Valid lifetime",
+          "description": "Leases are valid for this amount in seconds"
+        },
+        "renew-timer": {
+          "title": "Value of T1 in seconds",
+          "description": "RFC 2131: option 58; should be 50% of lease time before asking for renewal, an extention of the lease with the currently binded DHCP server \nsee: https://serverfault.com/questions/870/what-is-dhcp-rebinding",
+          "type":"integer"
+        },
+        "rebind-timer": {
+          "title": "Value of T2 in seconds",
+          "description": "RFC 2131: option 59; should be 87.5% of lease time before rebinding. Rebinding is a broadcast so it can bind to another DHCP server \nsee: https://serverfault.com/questions/870/what-is-dhcp-rebinding",
+          "type":"integer"
         },
         "store-extended-info": {
           "$ref": "#/definitions/store-extended-info"
         },
         "reservations": {
           "$ref": "#/definitions/reservations"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "ddns-qualifying-suffix": {
+          "type": "string"
         }
-      }
-    },
-    "subnet4array": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/subnet4"
       }
     },
     "subnet": {
@@ -116,48 +128,6 @@
       "title": "Store extended info",
       "description": "This will store extended info. This text is much longer than the title and may contain additional instructions and information",
       "type": "boolean"
-    },
-    "reservation-mac": {
-      "type": "object",
-      "properties": {
-        "ip-address": {
-          "$ref": "#/definitions/ip-address"
-        },
-        "hw-address": {
-          "$ref": "#/definitions/hw-address"
-        },
-        "hostname": {
-          "$ref": "#/definitions/host-name"
-        }
-      }
-    },
-    "reservation-did": {
-      "type": "object",
-      "properties": {
-        "ip-address": {
-          "$ref": "#/definitions/ip-address"
-        },
-        "did": {
-          "$ref": "#/definitions/did"
-        },
-        "hostname": {
-          "$ref": "#/definitions/host-name"
-        }
-      }
-    },
-    "reservation-circuit-id": {
-      "type": "object",
-      "properties": {
-        "ip-address": {
-          "$ref": "#/definitions/ip-address"
-        },
-        "circuit-id": {
-          "$ref": "#/definitions/circuit-id"
-        },
-        "hostname": {
-          "$ref": "#/definitions/host-name"
-        }
-      }
     },
     "hw-address": {
       "description": "MAC address",
@@ -194,22 +164,82 @@
     "reservation": {
       "type": "object",
       "properties": {
-        "ip-address": {"$ref": "#/definitions/ip-address"},
-        "hostname": {"$ref": "#/definitions/host-name"},
-        "hw-address": {"$ref": "#/definitions/hw-address"},
-        "did": {"$ref": "#/definitions/did"},
-        "circuit-id": {"$ref": "#/definitions/circuit-id"}
+        "ip-address": {
+          "$ref": "#/definitions/ip-address"
+        },
+        "hostname": {
+          "$ref": "#/definitions/host-name"
+        },
+        "hw-address": {
+          "$ref": "#/definitions/hw-address"
+        },
+        "did": {
+          "$ref": "#/definitions/did"
+        },
+        "circuit-id": {
+          "$ref": "#/definitions/circuit-id"
+        },
+        "option-data": {
+          "$ref": "#/definitions/option-data"
+        },
+        "next-server": {
+          "type": "string",
+          "format": "ipv4",
+          "default": "0.0.0.0"
+        },
+        "server-hostname": {
+          "type": "string",
+          "format": "fqdn",
+          "default": "server-hostname.example.org",
+          "title": "boot server fqdn",
+          "description": "Often options 66 and 67 are prefered over setting this"
+        },
+        "boot-file-name": {
+          "type": "string",
+          "default": "/folder/bootfile.efi",
+          "title": "bootfile including path",
+          "description": "Often options 66 and 67 are prefered over setting this"
+        }
       },
       "oneOf": [
-        {"required": ["ip-address","hostname","hw-address"]},
-        {"required": ["ip-address","hostname","did"]},
-        {"required": ["ip-address","hostname","circuit-id"]}
+        {
+          "required": [
+            "ip-address",
+            "hostname",
+            "hw-address"
+          ]
+        },
+        {
+          "required": [
+            "ip-address",
+            "hostname",
+            "did"
+          ]
+        },
+        {
+          "required": [
+            "ip-address",
+            "hostname",
+            "circuit-id"
+          ]
+        }
       ]
     },
     "reservations": {
       "type": "array",
       "items": {
         "$ref": "#/definitions/reservation"
+      }
+    },
+    "dhcp-ddns": {
+      "type": "object",
+      "properties": {
+        "enable-updates": {
+          "type": "boolean",
+          "title": "Enable DDNS Updates",
+          "default": true,
+          "description": "Updates DNS entries, must have DDNS set-up"
+        }
       }
     }
   },
@@ -219,7 +249,13 @@
       "$ref": "#/definitions/option-data"
     },
     "subnet4": {
-      "$ref": "#/definitions/subnet4array"
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/subnet4"
+      }
+    },
+    "dhcp-ddns": {
+      "$ref": "#/definitions/dhcp-ddns"
     }
   }
 }

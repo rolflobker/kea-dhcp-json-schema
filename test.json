@@ -1,0 +1,6 @@
+{
+  "$schema": "./keaschema.json",
+  "subnet4": [
+    {"rebind-timer": 0}
+  ]
+}
