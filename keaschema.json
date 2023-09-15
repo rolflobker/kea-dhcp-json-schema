@@ -1,0 +1,225 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Kea DHCP",
+  "description": "Kea DHCP Subnets configuration",
+  "definitions": {
+    "dhcp-option": {
+      "description": "Defines a DHCP option",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Pre-defined options",
+          "type": "string",
+          "enum": [
+            "domain-name-servers",
+            "routers",
+            "domain-name",
+            "time-servers",
+            "interface-mtu",
+            "static-routes",
+            "broadcast-address",
+            "ntp-servers",
+            "smtp-server",
+            "domain-search",
+            "todo: add the rest?"
+          ]
+        },
+        "code": {
+          "description": "dhcp option code (optional if predefined name given)",
+          "type": "number"
+        },
+        "csv-format": {
+          "description": "Why the fuck knows - not required if predefined name used",
+          "type": "boolean"
+        },
+        "data": {
+          "description": "for binary put the data in '' and set csv-format to false",
+          "type": "string"
+        },
+        "space": {
+          "description": "Dhcp4 or Dhcp6",
+          "type": "string",
+          "enum": [
+            "Dhcp4",
+            "Dhcp6"
+          ]
+        }
+      }
+    },
+    "option-data": {
+      "description": "option-data",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/dhcp-option"
+      }
+    },
+    "pool": {
+      "description": "A pool within a subnet can have specific options - example 192.168.1.1 - 192.168.1.20",
+      "type": "string"
+    },
+    "pooldata": {
+      "description": "Pool and option-data",
+      "type": "object",
+      "properties": {
+        "pool": {
+          "$ref": "#/definitions/pool"
+        },
+        "option-data": {
+          "$ref": "#/definitions/option-data"
+        }
+      }
+    },
+    "pools": {
+      "description": "Array of pools",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/pooldata"
+      }
+    },
+    "subnet4": {
+      "type": "object",
+      "description": "One or more IPv4 subnets",
+      "properties": {
+        "option-data": {
+          "$ref": "#/definitions/option-data"
+        },
+        "pools": {
+          "$ref": "#/definitions/pools"
+        },
+        "subnet": {
+          "$ref": "#/definitions/subnet"
+        },
+        "valid-lifetime": {
+          "$ref": "#/definitions/valid-lifetime"
+        },
+        "store-extended-info": {
+          "$ref": "#/definitions/store-extended-info"
+        },
+        "reservations": {
+          "$ref": "#/definitions/reservations"
+        }
+      }
+    },
+    "subnet4array": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/subnet4"
+      }
+    },
+    "subnet": {
+      "type": "string"
+    },
+    "valid-lifetime": {
+      "type": "integer"
+    },
+    "store-extended-info": {
+      "title": "Store extended info",
+      "description": "This will store extended info. This text is much longer than the title and may contain additional instructions and information",
+      "type": "boolean"
+    },
+    "reservation-mac": {
+      "type": "object",
+      "properties": {
+        "ip-address": {
+          "$ref": "#/definitions/ip-address"
+        },
+        "hw-address": {
+          "$ref": "#/definitions/hw-address"
+        },
+        "hostname": {
+          "$ref": "#/definitions/host-name"
+        }
+      }
+    },
+    "reservation-did": {
+      "type": "object",
+      "properties": {
+        "ip-address": {
+          "$ref": "#/definitions/ip-address"
+        },
+        "did": {
+          "$ref": "#/definitions/did"
+        },
+        "hostname": {
+          "$ref": "#/definitions/host-name"
+        }
+      }
+    },
+    "reservation-circuit-id": {
+      "type": "object",
+      "properties": {
+        "ip-address": {
+          "$ref": "#/definitions/ip-address"
+        },
+        "circuit-id": {
+          "$ref": "#/definitions/circuit-id"
+        },
+        "hostname": {
+          "$ref": "#/definitions/host-name"
+        }
+      }
+    },
+    "hw-address": {
+      "description": "MAC address",
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+      "default": "00:00:00:00:00:00"
+    },
+    "ip-address": {
+      "description": "IP address",
+      "type": "string",
+      "format": "ipv4",
+      "default": "192.168.1.1"
+    },
+    "host-name": {
+      "description": "Hostname",
+      "type": "string",
+      "format": "hostname",
+      "default": "myhost.tld"
+    },
+    "circuit-id": {
+      "title": "circuit id",
+      "description": "The circuit ID can be provided by upstream, use instead of HW address",
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+      "default": "00:00:00:00:00:00"
+    },
+    "did": {
+      "title": "did",
+      "description": "What the fuck is a did ???",
+      "type": "string",
+      "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+      "default": "00:00:00:00:00:00"
+    },
+    "reservation": {
+      "type": "object",
+      "properties": {
+        "ip-address": {"$ref": "#/definitions/ip-address"},
+        "hostname": {"$ref": "#/definitions/host-name"},
+        "hw-address": {"$ref": "#/definitions/hw-address"},
+        "did": {"$ref": "#/definitions/did"},
+        "circuit-id": {"$ref": "#/definitions/circuit-id"}
+      },
+      "oneOf": [
+        {"required": ["ip-address","hostname","hw-address"]},
+        {"required": ["ip-address","hostname","did"]},
+        {"required": ["ip-address","hostname","circuit-id"]}
+      ]
+    },
+    "reservations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/reservation"
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "option-data": {
+      "$ref": "#/definitions/option-data"
+    },
+    "subnet4": {
+      "$ref": "#/definitions/subnet4array"
+    }
+  }
+}
