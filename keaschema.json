@@ -97,12 +97,12 @@
         "renew-timer": {
           "title": "Value of T1 in seconds",
           "description": "RFC 2131: option 58; should be 50% of lease time before asking for renewal, an extention of the lease with the currently binded DHCP server \nsee: https://serverfault.com/questions/870/what-is-dhcp-rebinding",
-          "type":"integer"
+          "type": "integer"
         },
         "rebind-timer": {
           "title": "Value of T2 in seconds",
           "description": "RFC 2131: option 59; should be 87.5% of lease time before rebinding. Rebinding is a broadcast so it can bind to another DHCP server \nsee: https://serverfault.com/questions/870/what-is-dhcp-rebinding",
-          "type":"integer"
+          "type": "integer"
         },
         "store-extended-info": {
           "$ref": "#/definitions/store-extended-info"
@@ -247,6 +247,43 @@
   "properties": {
     "option-data": {
       "$ref": "#/definitions/option-data"
+    },
+    "ddns-send-updates": {
+      "type": "boolean"
+    },
+    "ddns-update-on-renew": {
+      "type": "boolean"
+    },
+    "echo-client-id": {
+      "type": "boolean"
+    },
+    "expired-leases-processing": {
+      "type": "object",
+      "properties": {
+        "flush-reclaimed-timer-wait-time": {
+          "type": "integer"
+        },
+        "hold-reclaimed-time": {
+          "type": "integer",
+          "default": 25
+        },
+        "max-reclaim-leases": {
+          "type": "integer",
+          "default": 3600
+        },
+        "max-reclaim-time": {
+          "type": "integer",
+          "default": 250
+        },
+        "reclaim-timer-wait-time": {
+          "type": "integer",
+          "default": 10
+        },
+        "unwarned-reclaim-cycles": {
+          "type": "integer",
+          "default": 5
+        }
+      }
     },
     "subnet4": {
       "type": "array",
