@@ -1,6 +1,3 @@
 {
-  "$schema": "./keaschema.json",
-  "subnet4": [
-    {"rebind-timer": 0}
-  ]
+  "$schema": "https://raw.githubusercontent.com/rolflobker/kea-dhcp-json-schema/main/keaschema.json"
 }
